@@ -1,9 +1,10 @@
 import { useContext } from "react";
 import Modal from "./UI/Modal";
 import CartContext from "../store/CartContext";
-import {currencyFormatter} from "../util/formatting.js";
+import { currencyFormatter } from "../util/formatting.js";
 import Button from "./UI/Button";
 import UserProgressContext from "../store/UserProgressContext.jsx";
+import CartItem from "./CartItem.jsx";
 
 export default function Cart() {
   const cartCtx = useContext(CartContext);
@@ -14,23 +15,30 @@ export default function Cart() {
     0
   );
 
-  function handleHideCart(){
+  function handleHideCart() {
     userProgressCtx.hideCart();
   }
 
   return (
-    <Modal className="cart" open={userProgressCtx.progress === 'cart'}>
+    <Modal className="cart" open={userProgressCtx.progress === "cart"}>
       <h2>Your Cart</h2>
       <ul>
         {cartCtx.items.map((item) => (
-          <li key={item.id}>
-            {item.name} - {item.quantity}
-          </li>
+          <CartItem
+            key={item.id}
+            name={item.name}
+            quantity={item.quantity}
+            price={item.price}
+            onIncrease={() => cartCtx.addItem(item)}
+            onDecrease={() => cartCtx.removeItem(item.id)}
+          />
         ))}
       </ul>
       <p className="cart-total">{currencyFormatter.format(cartTotal)}</p>
       <p className="modal-actions">
-        <Button textOnly onClick={handleHideCart}>Close</Button>
+        <Button textOnly onClick={handleHideCart}>
+          Close
+        </Button>
         <Button>Go to Checkout</Button>
       </p>
     </Modal>
